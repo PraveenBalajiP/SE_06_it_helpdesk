@@ -56,8 +56,6 @@ Be ready to explain the bugs you found and how you fixed them. You may be called
 | Path | Purpose |
 |---|---|
 | `helpdesk_system.py` | Cleaned and corrected program (final version) |
-| `issues.md` | Issue table: what was found and how it was fixed |
-| `reflection.md` | Answers to the four reflection questions |
 | `reports/before/` | Pylint / Bandit (/ Flake8) reports on the ORIGINAL code |
 | `reports/after/` | Pylint / Bandit / Flake8 reports on the FIXED code |
 | `outputs/` | Program run output and generated `tickets.json` |
