@@ -1,0 +1,4 @@
+﻿Unassigned high priority: [101]
+Urgency for a new laptop ticket (1-5, Enter for 3): Ticket #102 closed.
+Open tickets: [100, 101, 103]
+Tickets saved to tickets.json
