@@ -1,36 +1,24 @@
-﻿# Lab 5 — Static Code Analysis Reflection
+# Lab 5 - Static Code Analysis Reflection
 
-## 1. Which fixes were easiest and hardest, and why?
+## 1. Which issues were the easiest to fix, and which were the hardest? Why?
 
-The easiest fixes were code-style improvements and file handling. For example, adding a context manager for file operations and following consistent naming and formatting conventions were straightforward.
+**Easiest:** the style and quality findings Pylint reported: missing docstrings, `snake_case` naming, `== None` to `is None`, the unused variable, f-strings, `.items()`, and opening files with `with` and an encoding. Each had a clear message and a one-line fix with no change in behaviour.
 
-The harder fixes involved security and program behaviour. Replacing the hard-coded administrator password with an environment variable required changes to how ticket closure is configured. Revising the ping functionality required attention to input validation, command execution, and timeout handling. Urgency validation also needed to ensure that invalid values could not create tickets with inappropriate priorities.
+**Hardest:** the security and behaviour issues. Removing the shell from the ping function meant adding hostname validation, an argument list, a timeout, and OS-specific flags, then thinking through attack inputs. Moving the admin password to an environment variable changed how ticket closing is configured. Urgency validation was not flagged by any tool and had to be found by running the program and testing odd inputs.
 
-## 2. Did any tools report false positives?
+## 2. Did the static analysis tools report any false positives? If so, describe one example.
 
-Bandit reported two Low-severity findings: B404 for importing `subprocess` and B603 for calling `subprocess.run()`.
+Yes, in the practical sense. After the fixes, Bandit still reports B404 (importing `subprocess`) and B603 (calling `subprocess.run`). Both are Low severity and Bandit warns about them for any subprocess use. In this code the command is an argument list, `shell=True` is not used, the hostname is validated with a regex, and a timeout is set, so they are not exploitable. I documented them in `issues.md` instead of suppressing them. Also, Bandit rated the hard-coded password (B105) only Low, even though in practice it was the most serious credential problem, so tool severity should be reviewed, not trusted blindly.
 
-These findings are warnings that require review rather than proof of an exploitable vulnerability. The helpdesk system uses subprocess functionality for its ping feature. The corrected implementation passes command arguments as a list, does not enable shell execution, validates the hostname, and sets a timeout.
+## 3. How would you integrate static analysis tools into your actual software development workflow?
 
-The warnings were therefore documented and reviewed instead of being suppressed. No Medium- or High-severity Bandit findings remained in the final report.
+I would run Flake8, Pylint, and Bandit locally before each commit, for example with a pre-commit hook, and again in CI (such as GitHub Actions) on every push and pull request, failing the build on Medium or High findings or on a Pylint score below a set threshold. Any warning that is deliberately accepted would be documented with a justification. Tools do not replace code review or testing, so I would use them alongside both.
 
-## 3. How could static analysis tools be integrated into the development workflow?
+## 4. What tangible improvements did you observe in the code quality, readability, or potential robustness after applying the fixes?
 
-Pylint, Bandit, and Flake8 can be run before committing changes to the repository. Their commands can also be added to a GitHub Actions workflow so that each push or pull request triggers automated checks.
-
-Developers should review the reports, correct genuine issues, and document any remaining warnings with a clear justification. Running the tools consistently helps detect problems earlier and reduces the effort required during code review.
-
-## 4. What tangible improvements were achieved?
-
-The corrections improved the helpdesk program in several ways:
-
-- Urgency values are validated and restricted to the range 1–5.
-- The administrator password is obtained from an environment variable rather than being stored directly in the source code.
-- The ping feature avoids shell-based command execution and includes input validation and a timeout.
-- The audit log no longer uses a mutable default argument.
-- Invalid or empty input is handled more consistently.
-- File operations use a context manager and explicit UTF-8 encoding.
-- The program has a main-entry guard, allowing its functions to be imported without automatically running the demonstration.
-- Pylint reached 10.00/10, Flake8 reported no violations, and Bandit reported no Medium- or High-severity findings.
-
-Overall, the exercise improved code quality, input handling, and security awareness while demonstrating how static analysis can support software maintenance.
+- Pylint improved from 5.53/10 to 10.00/10, Flake8 reports no violations, and Bandit dropped from 1 High and 3 Low issues to 2 Low ones.
+- Urgency and other inputs are validated, so bad data can no longer create invalid tickets.
+- The admin password is no longer in the source code.
+- The ping feature is no longer open to command injection.
+- Errors are no longer silently swallowed, and the audit log no longer shares state between calls.
+- Docstrings, consistent naming, and a `main()` guard make the code easier to read, test, and import.
