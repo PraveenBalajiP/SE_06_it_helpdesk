@@ -49,3 +49,18 @@ The code works, but only just. It has quality, style and security problems of th
 **Target:** aim for a Pylint score above 9.5 on your final file. A perfect 10.00/10 is very good.
 
 Be ready to explain the bugs you found and how you fixed them. You may be called on to present.
+
+
+## Project structure
+
+| Path | Purpose |
+|---|---|
+| `helpdesk_system.py` | Cleaned and corrected program (final version) |
+| `issues.md` | Issue table: what was found and how it was fixed |
+| `reflection.md` | Answers to the four reflection questions |
+| `reports/before/` | Pylint / Bandit (/ Flake8) reports on the ORIGINAL code |
+| `reports/after/` | Pylint / Bandit / Flake8 reports on the FIXED code |
+| `outputs/` | Program run output and generated `tickets.json` |
+| `requirements.txt` | Analysis tools used |
+
+Run: `set HELPDESK_ADMIN_PASSWORD=yourpassword` (optional, enables ticket closing), then `python helpdesk_system.py`.
